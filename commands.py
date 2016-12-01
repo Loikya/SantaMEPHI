@@ -33,18 +33,25 @@ def delete_user(vk_id, payload, gbot):
     gbot.messages.send(peer_id=vk_id, message='Ваш id был удален из базы', random_id=random.randint(0, 200000))
 
 
-command_str_list = '\n!зарегистрироваться\n!отказаться\n!инфо\n!группа <группа>'
+command_str_list = u'\n!зарегистрироваться\n!отказаться\n!инфо\n!группа <группа>'
 
 
 def show_info(vk_id, payload, gbot):
     conn = mysql.connector.connect(user=sql_user, password=sql_pass, host=sql_host, database=sql_base)
     cur = conn.cursor()
-    cur.execute('SELECT id FROM users WHERE id=%s', (vk_id,))
+    cur.execute('SELECT `id`, `group` FROM `users` WHERE `id`=%s', (vk_id,))
     user = cur.fetchall()
+    msg = u''
     if (len(user) != 0):
-        gbot.messages.send(peer_id=vk_id, message='Вы участвуете в игре'+command_str_list, random_id=random.randint(0, 200000))
+        msg += u'Вы участвуете в игре\n'
+        if (user[0][1] != ''):
+            msg += u'Указана группа: ' + user[0][1]
+        else:
+            msg += u'Информация о группе не указана'
     else:
-        gbot.messages.send(peer_id=vk_id, message='Вы не участвуете в игре'+command_str_list, random_id=random.randint(0, 200000))
+        msg += u'Вы не участвуете в игре'
+    msg += u'\n\nСписок доступных команд:' + command_str_list
+    gbot.messages.send(peer_id=vk_id, message=msg, random_id=random.randint(0, 200000))
 
 
 def set_group(vk_id, payload, gbot):

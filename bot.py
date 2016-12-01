@@ -24,7 +24,7 @@ def main():
         try:
             poll = gbot.messages.getLongPollServer()
             r = requests.request("GET", "http://" + poll['server'] + "?act=a_check&key=" + poll['key'] + "&ts=" + str(
-                poll['ts']) + "&wait=25&mode=2", timeout=50)
+                poll['ts']) + "&wait=10&mode=2", timeout=50)
             mesg_poll = r.json()
             for mesg in mesg_poll['updates']:
                 run_msg(mesg, gbot)
